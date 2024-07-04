@@ -5,7 +5,7 @@ export type Variants = {
 
 export type Inventory = {
   quantity: number;
-  inStock: 'In Stock' | 'Not in Stock';
+  inStock: true | false;
 };
 
 export type Product = {
