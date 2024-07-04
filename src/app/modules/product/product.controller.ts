@@ -45,87 +45,103 @@ const getSingleProduct = async (req: Request, res: Response) => {
   }
 };
 
-const updateProduct = async (req: Request, res: Response) => {
-  try {
-    const { productId } = req.params;
-    const updatedProduct = req.body;
-
-    console.log('Update request body:', updatedProduct); // Debugging log
-
-    const result = await ProductServices.updateProduct(
-      productId,
-      updatedProduct,
-    );
-
-    if (result) {
+const deleteProduct = async (req: Request, res: Response) => {
+    try {
+      const { productId } = req.params;
+  
+      const result = await ProductServices.deleteProduct(productId);
+  
       res.status(200).json({
         success: true,
-        message: 'Product updated successfully!',
-        data: result,
+        message: "Product deleted successfully!",
+        data: null,
       });
-    } else {
-      res.status(404).json({
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
         success: false,
-        message: 'Product not found',
+        message: 'Error deleting product',
       });
     }
-  } catch (err) {
-    console.error('Error updating product:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update product',
-      error: err.message,
-    });
-  }
-};
+  };
 
-const deleteProduct = async (req: Request, res: Response) => {
-  try {
-    const { productId } = req.params;
-
-    const result = await ProductServices.deleteProduct(productId);
-
-    res.status(200).json({
-      success: true,
-      message: 'Product deleted successfully!',
-      data: null,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'Error deleting product',
-    });
-  }
-};
-
-const searchProducts = async (req: Request, res: Response) => {
-  try {
-    const { name } = req.query;
-
-    if (!name || typeof name !== 'string') {
-      return res.status(400).json({
+const updateProduct = async (req: Request, res: Response) => {
+    try {
+      const { productId } = req.params;
+      const updatedProduct = req.body;
+  
+    //   console.log('Update request body:', updatedProduct); // Debugging log
+  
+      const result = await ProductServices.updateProduct(productId, updatedProduct);
+  
+      if (result) {
+        res.status(200).json({
+          success: true,
+          message: "Product updated successfully!",
+          data: result,
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          message: 'Product not found',
+        });
+      }
+    } catch (err) {
+      console.error('Error updating product:', err);
+      res.status(500).json({
         success: false,
-        message: 'Invalid search term provided',
+        message: 'Failed to update product',
+        // error: err.message,
       });
     }
+  };
 
-    const result = await ProductServices.searchProductsInDB(name);
 
-    res.status(200).json({
-      success: true,
-      message: 'Products retrieved successfully',
-      data: result,
-    });
-  } catch (err) {
-    console.error('Error searching products:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve products',
-      error: err.message,
-    });
-  }
-};
+
+//   const searchProducts = async (req: Request, res: Response) => {
+//     try {
+//       const { name } = req.query;
+  
+//       if (!name || typeof name !== 'string') {
+//         return res.status(400).json({
+//           success: false,
+//           message: 'Invalid search term provided',
+//         });
+//       }
+  
+//       const result = await ProductServices.searchProductsInDB(name);
+  
+//       res.status(200).json({
+//         success: true,
+//         message: 'Products retrieved successfully',
+//         data: result,
+//       });
+//     } catch (err) {
+//       console.error('Error searching products:', err);
+//       res.status(500).json({
+//         success: false,
+//         message: 'Failed to retrieve products',
+//         error: err.message,
+//       });
+//     }
+//   };
+  
+const createOrder = async (req: Request, res: Response) => {
+    try {
+      const { order: orderData } = req.body;
+      const OrderResult = await ProductServices.createOrder(orderData);
+  
+      res.status(200).json({
+        success: true,
+        message: 'Product created successfully!',
+        data: OrderResult,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
 
 export const ProductControllers = {
   createProduct,
@@ -133,5 +149,6 @@ export const ProductControllers = {
   getSingleProduct,
   updateProduct,
   deleteProduct,
-  searchProducts,
+//   searchProducts
+createOrder
 };

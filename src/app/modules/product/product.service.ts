@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Product } from './product.interface';
+import { Order, Product } from './product.interface';
 import { ProductModel } from './product.model';
 
 const createProductIntoDB = async (product: Product) => {
@@ -47,6 +47,15 @@ const searchProductsInDB = async (name: string): Promise<Product[]> => {
   return result;
 };
 
+
+const createOrder = async (order: Order) => {
+    const Result = await ProductModel.create(order);
+    return Result;
+  };
+
+
+
+
 export const ProductServices = {
   createProductIntoDB,
   getAllProductsFromDB,
@@ -54,4 +63,5 @@ export const ProductServices = {
   updateProduct,
   deleteProduct,
   searchProductsInDB,
+  createOrder
 };

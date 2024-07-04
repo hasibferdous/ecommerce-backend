@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Inventory, Product, Variants } from './product.interface';
+import { Inventory, Order, Product, Variants } from './product.interface';
 
 const variantsSchema = new Schema<Variants>({
   type: { type: String },
@@ -24,8 +24,17 @@ const productSchema = new Schema<Product>({
   inventory: { type: inventorySchema, _id:false },
 });
 
+const orderSchema = new Schema<Order>({
+    email: { type: String },
+    productId: { type: String },
+    price: { type: Number },
+    quantity: { type: Number },
+  });
+
+
+
 // Index for text search
 productSchema.index({ name: 'text', description: 'text' });
 
 
-export const ProductModel = model<Product>('Product', productSchema);
+export const ProductModel = model<Product>('Product', productSchema,);

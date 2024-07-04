@@ -17,3 +17,11 @@ export type Product = {
   variants?: Variants[];
   inventory?: Inventory;
 };
+
+
+export type Order = {
+  email: string;
+  productId: string;
+  price: number;
+  quantity: number;
+};

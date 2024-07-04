@@ -9,6 +9,6 @@ router.get('/:productId', ProductControllers.getSingleProduct);
 // PUT /api/products/:productId
 router.put('/:productId', ProductControllers.updateProduct);
 router.delete('/:productId', ProductControllers.deleteProduct);
-router.get('/searchTerm=', ProductControllers.searchProducts);
-
+// router.get('/searchTerm=', ProductControllers.searchProducts);
+router.post('/create-order',    ProductControllers.createOrder);
 export const ProductRoutes = router;
