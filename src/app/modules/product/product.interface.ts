@@ -5,16 +5,16 @@ export type Variants = {
 
 export type Inventory = {
   quantity: number;
-  inStock: true | false;
+  inStock: boolean;
 };
 
 export type Product = {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   price: number;
-  category: string;
-  tags: string[];
-  variants: Variants[];
-  inventory: Inventory;
+  category?: string;
+  tags?: string[];
+  variants?: Variants[];
+  inventory?: Inventory;
 };
