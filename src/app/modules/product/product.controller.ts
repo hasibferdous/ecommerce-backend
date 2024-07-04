@@ -45,8 +45,93 @@ const getSingleProduct = async (req: Request, res: Response) => {
   }
 };
 
+const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const updatedProduct = req.body;
+
+    console.log('Update request body:', updatedProduct); // Debugging log
+
+    const result = await ProductServices.updateProduct(
+      productId,
+      updatedProduct,
+    );
+
+    if (result) {
+      res.status(200).json({
+        success: true,
+        message: 'Product updated successfully!',
+        data: result,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+  } catch (err) {
+    console.error('Error updating product:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update product',
+      error: err.message,
+    });
+  }
+};
+
+const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+
+    const result = await ProductServices.deleteProduct(productId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Product deleted successfully!',
+      data: null,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting product',
+    });
+  }
+};
+
+const searchProducts = async (req: Request, res: Response) => {
+  try {
+    const { name } = req.query;
+
+    if (!name || typeof name !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid search term provided',
+      });
+    }
+
+    const result = await ProductServices.searchProductsInDB(name);
+
+    res.status(200).json({
+      success: true,
+      message: 'Products retrieved successfully',
+      data: result,
+    });
+  } catch (err) {
+    console.error('Error searching products:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve products',
+      error: err.message,
+    });
+  }
+};
+
 export const ProductControllers = {
   createProduct,
   getAllProducts,
   getSingleProduct,
+  updateProduct,
+  deleteProduct,
+  searchProducts,
 };

@@ -20,8 +20,12 @@ const productSchema = new Schema<Product>({
   price: { type: Number },
   category: { type: String },
   tags: { type: [String] },
-  variants: { type: [variantsSchema] },
-  inventory: { type: inventorySchema },
+  variants: { type: [variantsSchema], _id:false },
+  inventory: { type: inventorySchema, _id:false },
 });
+
+// Index for text search
+productSchema.index({ name: 'text', description: 'text' });
+
 
 export const ProductModel = model<Product>('Product', productSchema);
