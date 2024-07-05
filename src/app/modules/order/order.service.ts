@@ -14,7 +14,23 @@ const createOrder = async (order: Order) => {
     return orderResult;
   };
 
+
+  const getOrderFromDB = async (email: string) => {
+    if (email) {
+      const orderResult = await orderModel.find({ email });
+      return orderResult;
+    } else {
+      const orderResult = await orderModel.find();
+      return orderResult;
+    }
+  };
+  
+
+
+
   export const OrderServices = {
     createOrder,
-    getAllOrders
+    getAllOrders,
+    getOrderFromDB
+    
   };

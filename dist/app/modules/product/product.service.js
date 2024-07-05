@@ -41,17 +41,17 @@ const deleteProduct = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_model_1.ProductModel.findByIdAndDelete(_id);
     return result;
 });
-const searchProductsInDB = (name) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield product_model_1.ProductModel.find({
-        $text: { $search: name },
-    });
-    return result;
-});
+// const searchProductsInDB = async (name: string): Promise<Product[]> => {
+//   const result = await ProductModel.find({
+//     $text: { $search: name },
+//   });
+//   return result;
+// };
 exports.ProductServices = {
     createProductIntoDB,
     getAllProductsFromDB,
     getSingleProductFromDB,
     updateProduct,
     deleteProduct,
-    searchProductsInDB,
+    // searchProductsInDB,
 };

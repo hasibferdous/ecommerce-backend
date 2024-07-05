@@ -8,13 +8,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderServices = void 0;
-const order_model_1 = require("./order.model");
+const order_model_1 = __importDefault(require("./order.model"));
 const createOrder = (order) => __awaiter(void 0, void 0, void 0, function* () {
-    const OrderResult = yield order_model_1.OrderModel.create(order);
-    return OrderResult;
+    const orderResult = yield order_model_1.default.create(order);
+    return orderResult;
+});
+const getAllOrders = () => __awaiter(void 0, void 0, void 0, function* () {
+    const orderResult = yield order_model_1.default.find();
+    return orderResult;
+});
+const getOrderFromDB = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    if (email) {
+        const orderResult = yield order_model_1.default.find({ email });
+        return orderResult;
+    }
+    else {
+        const orderResult = yield order_model_1.default.find();
+        return orderResult;
+    }
 });
 exports.OrderServices = {
     createOrder,
+    getAllOrders,
+    getOrderFromDB
 };

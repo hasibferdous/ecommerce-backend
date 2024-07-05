@@ -22,6 +22,4 @@ const productSchema = new mongoose_1.Schema({
     variants: { type: [variantsSchema], _id: false },
     inventory: { type: inventorySchema, _id: false },
 });
-// Index for text search
-productSchema.index({ name: 'text', description: 'text' });
 exports.ProductModel = (0, mongoose_1.model)('Product', productSchema);

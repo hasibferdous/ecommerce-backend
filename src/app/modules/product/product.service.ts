@@ -1,67 +1,51 @@
-import mongoose from 'mongoose';
-import { Order, Product } from './product.interface';
+import { TProduct } from './product.interface';
 import { ProductModel } from './product.model';
 
-const createProductIntoDB = async (product: Product) => {
+// create a product service
+const createProductIntoDB = async (product: TProduct) => {
   const result = await ProductModel.create(product);
   return result;
 };
 
+// get all product service
 const getAllProductsFromDB = async () => {
   const result = await ProductModel.find();
   return result;
 };
 
+// get single product service
 const getSingleProductFromDB = async (_id: string) => {
   const result = await ProductModel.findOne({ _id });
   return result;
 };
 
-const updateProduct = async (
-  _id: string,
-  updatedProduct: Partial<Product>,
-): Promise<Product | null> => {
-  try {
-    const result = await ProductModel.findByIdAndUpdate(
-      new mongoose.Types.ObjectId(_id),
-      updatedProduct,
-      { new: true, runValidators: true },
-    );
-    return result;
-  } catch (error) {
-    console.error('Error in updateProduct service:', error);
-    throw error;
-  }
-};
-
-const deleteProduct = async (_id: string): Promise<Product | null> => {
-  const result = await ProductModel.findByIdAndDelete(_id);
-  return result;
-};
-
-const searchProductsInDB = async (name: string): Promise<Product[]> => {
-  const result = await ProductModel.find({
-    $text: { $search: name },
+// update a product service
+const updateProductIntoDB = async (id: string, product: Partial<TProduct>) => {
+  const result = await ProductModel.findByIdAndUpdate(id, product, {
+    new: true,
   });
-
   return result;
 };
 
+// delete a product service
+const deleteProductFromDB = async (id: string) => {
+  const result = await ProductModel.findByIdAndDelete(id);
+  return result;
+};
 
-const createOrder = async (order: Order) => {
-    const Result = await ProductModel.create(order);
-    return Result;
-  };
-
-
-
+// search product service
+const getSearchedProductFromDB = async (searchTerm: string) => {
+  const result = await ProductModel.find({
+    $text: { $search: searchTerm },
+  });
+  return result;
+};
 
 export const ProductServices = {
   createProductIntoDB,
   getAllProductsFromDB,
   getSingleProductFromDB,
-  updateProduct,
-  deleteProduct,
-  searchProductsInDB,
-  createOrder
+  updateProductIntoDB,
+  deleteProductFromDB,
+  getSearchedProductFromDB,
 };

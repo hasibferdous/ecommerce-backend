@@ -14,17 +14,52 @@ const order_service_1 = require("./order.service");
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { order: orderData } = req.body;
-        const OrderResult = yield order_service_1.OrderServices.createOrder(orderData);
+        const orderResult = yield order_service_1.OrderServices.createOrder(orderData);
         res.status(200).json({
             success: true,
-            message: 'Product created successfully!',
-            data: OrderResult,
+            message: "Order created successfully!",
+            data: orderResult,
         });
     }
     catch (err) {
         console.log(err);
     }
 });
+const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const orderResult = yield order_service_1.OrderServices.getAllOrders();
+        res.status(200).json({
+            success: true,
+            message: "Orders fetched successfully!",
+            data: orderResult,
+        });
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const email = req.query.email;
+        const orderResult = yield order_service_1.OrderServices.getOrderFromDB(email !== null && email !== void 0 ? email : '');
+        return res.status(200).json({
+            success: true,
+            message: email
+                ? 'Orders fetched successfully for user email!'
+                : 'Orders fetched successfully!',
+            data: orderResult,
+        });
+    }
+    catch (error) {
+        res.status(400).json({
+            success: false,
+            message: 'Failed to fetched orders!',
+            error: error,
+        });
+    }
+});
 exports.OrderControllers = {
-    createOrder
+    createOrder,
+    getAllOrders,
+    getOrder
 };
