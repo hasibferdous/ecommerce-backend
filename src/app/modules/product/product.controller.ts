@@ -38,7 +38,7 @@ const getAllProducts = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: searchTerm
-        ? `Products matching search term ${searchTerm} fetched successfully!`
+        ? `Products matching search term '${searchTerm}' fetched successfully!`
         : 'Products fetched successfully!',
       data: result,
     });
@@ -62,8 +62,12 @@ const getSingleProduct = async (req: Request, res: Response) => {
       message: 'Product fetched successfully!',
       data: result,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Something went wrong',
+      error: error,
+    });
   }
 };
 
@@ -72,9 +76,6 @@ const updateProductById = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
     const productData = req.body;
-    // zod validation
-    // const zodParseData = productValidationSchema.parse(productData)
-
     const result = await ProductServices.updateProductIntoDB(
       productId,
       productData,

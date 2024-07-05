@@ -59,13 +59,12 @@ const productSchema = new Schema<TProduct>({
   variants: {
     type: [variantsSchema],
     required: [true, 'Variants are required'],
-    _id: false
-
+    _id: false,
   },
   inventory: {
     type: inventorySchema,
     required: [true, 'Inventory is required'],
-    _id: false
+    _id: false,
   },
 });
 
