@@ -8,13 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductControllers = void 0;
 const product_service_1 = require("./product.service");
+const product_validation_1 = __importDefault(require("./product.validation"));
+// create new product controller
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { product: productData } = req.body;
-        const result = yield product_service_1.ProductServices.createProductIntoDB(productData);
+        // zod validation
+        const zodParseData = product_validation_1.default.parse(productData);
+        const result = yield product_service_1.ProductServices.createProductIntoDB(zodParseData);
         res.status(200).json({
             success: true,
             message: 'Product created successfully!',
@@ -25,19 +32,35 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         console.log(err);
     }
 });
+// get all products controller
 const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield product_service_1.ProductServices.getAllProductsFromDB();
+        let result;
+        // to search product
+        const { searchTerm } = req.query;
+        if (searchTerm) {
+            result = yield product_service_1.ProductServices.getSearchedProductFromDB(searchTerm);
+        }
+        else {
+            result = yield product_service_1.ProductServices.getAllProductsFromDB();
+        }
         res.status(200).json({
             success: true,
-            message: 'Products fetched successfully!',
+            message: searchTerm
+                ? `Products matching search term '${searchTerm}' fetched successfully!`
+                : 'Products fetched successfully!',
             data: result,
         });
     }
-    catch (err) {
-        console.log(err);
+    catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message || 'Something went wrong',
+            error: error,
+        });
     }
 });
+// get single product controller
 const getSingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
@@ -48,86 +71,57 @@ const getSingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, functio
             data: result,
         });
     }
-    catch (err) {
-        console.log(err);
+    catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message || 'Something went wrong',
+            error: error,
+        });
     }
 });
-const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// update product controller
+const updateProductById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
-        const result = yield product_service_1.ProductServices.deleteProduct(productId);
+        const productData = req.body;
+        const result = yield product_service_1.ProductServices.updateProductIntoDB(productId, productData);
         res.status(200).json({
             success: true,
-            message: "Product deleted successfully!",
+            message: 'Product updated successfully!',
             data: result,
         });
     }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({
+    catch (error) {
+        res.status(400).json({
             success: false,
-            message: 'Error deleting product',
+            message: error.message || 'Something went wrong',
+            error: error,
         });
     }
 });
-const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// delete product controller
+const deleteSingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
-        const updatedProduct = req.body;
-        //   console.log('Update request body:', updatedProduct); // Debugging log
-        const result = yield product_service_1.ProductServices.updateProduct(productId, updatedProduct);
-        if (result) {
-            res.status(200).json({
-                success: true,
-                message: "Product updated successfully!",
-                data: result,
-            });
-        }
-        else {
-            res.status(404).json({
-                success: false,
-                message: 'Product not found',
-            });
-        }
+        yield product_service_1.ProductServices.deleteProductFromDB(productId);
+        res.status(200).json({
+            success: true,
+            message: 'Product deleted successfully!',
+            data: null,
+        });
     }
-    catch (err) {
-        console.error('Error updating product:', err);
-        res.status(500).json({
+    catch (error) {
+        res.status(400).json({
             success: false,
-            message: 'Failed to update product',
-            // error: err.message,
+            message: error.message || 'Something went wrong',
+            error: error,
         });
     }
 });
-//   const searchProducts = async (req: Request, res: Response) => {
-//     try {
-//       const { name } = req.query;
-//       if (!name || typeof name !== 'string') {
-//         return res.status(400).json({
-//           success: false,
-//           message: 'Invalid search term provided',
-//         });
-//       }
-//       const result = await ProductServices.searchProductsInDB(name);
-//       res.status(200).json({
-//         success: true,
-//         message: 'Products retrieved successfully',
-//         data: result,
-//       });
-//     } catch (err) {
-//       console.error('Error searching products:', err);
-//       res.status(500).json({
-//         success: false,
-//         message: 'Failed to retrieve products',
-//         error: err.message,
-//       });
-//     }
-//   };
 exports.ProductControllers = {
     createProduct,
     getAllProducts,
     getSingleProduct,
-    updateProduct,
-    deleteProduct,
-    //   searchProducts
+    updateProductById,
+    deleteSingleProduct,
 };

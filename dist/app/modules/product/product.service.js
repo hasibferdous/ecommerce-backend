@@ -8,50 +8,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductServices = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
 const product_model_1 = require("./product.model");
+// create a product service
 const createProductIntoDB = (product) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_model_1.ProductModel.create(product);
     return result;
 });
+// get all product service
 const getAllProductsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_model_1.ProductModel.find();
     return result;
 });
+// get single product service
 const getSingleProductFromDB = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_model_1.ProductModel.findOne({ _id });
     return result;
 });
-const updateProduct = (_id, updatedProduct) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const result = yield product_model_1.ProductModel.findByIdAndUpdate(new mongoose_1.default.Types.ObjectId(_id), updatedProduct, { new: true, runValidators: true });
-        return result;
-    }
-    catch (error) {
-        console.error('Error in updateProduct service:', error);
-        throw error;
-    }
-});
-const deleteProduct = (_id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield product_model_1.ProductModel.findByIdAndDelete(_id);
+// update a product service
+const updateProductIntoDB = (id, product) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_model_1.ProductModel.findByIdAndUpdate(id, product, {
+        new: true,
+    });
     return result;
 });
-// const searchProductsInDB = async (name: string): Promise<Product[]> => {
-//   const result = await ProductModel.find({
-//     $text: { $search: name },
-//   });
-//   return result;
-// };
+// delete a product service
+const deleteProductFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_model_1.ProductModel.findByIdAndDelete(id);
+    return result;
+});
+// search product service
+const getSearchedProductFromDB = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_model_1.ProductModel.find({
+        $text: { $search: searchTerm },
+    });
+    return result;
+});
 exports.ProductServices = {
     createProductIntoDB,
     getAllProductsFromDB,
     getSingleProductFromDB,
-    updateProduct,
-    deleteProduct,
-    // searchProductsInDB,
+    updateProductIntoDB,
+    deleteProductFromDB,
+    getSearchedProductFromDB,
 };

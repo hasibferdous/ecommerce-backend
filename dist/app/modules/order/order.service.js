@@ -8,32 +8,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderServices = void 0;
-const order_model_1 = __importDefault(require("./order.model"));
-const createOrder = (order) => __awaiter(void 0, void 0, void 0, function* () {
-    const orderResult = yield order_model_1.default.create(order);
-    return orderResult;
-});
-const getAllOrders = () => __awaiter(void 0, void 0, void 0, function* () {
-    const orderResult = yield order_model_1.default.find();
-    return orderResult;
-});
-const getOrderFromDB = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    if (email) {
-        const orderResult = yield order_model_1.default.find({ email });
-        return orderResult;
+const product_service_1 = require("../product/product.service");
+const order_model_1 = require("./order.model");
+// add new order and update quantity
+const addNewOrderToDB = (order) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // get single product
+    const getSingleProductFromDB = yield product_service_1.ProductServices.getSingleProductFromDB(String(order === null || order === void 0 ? void 0 : order.productId));
+    if (!getSingleProductFromDB) {
+        throw new Error('Order not found');
+    }
+    const availableQuantity = ((_a = getSingleProductFromDB === null || getSingleProductFromDB === void 0 ? void 0 : getSingleProductFromDB.inventory) === null || _a === void 0 ? void 0 : _a.quantity);
+    if (availableQuantity <= 0 || (order === null || order === void 0 ? void 0 : order.quantity) > availableQuantity) {
+        throw new Error('Insufficient quantity available in inventory');
     }
     else {
-        const orderResult = yield order_model_1.default.find();
-        return orderResult;
+        const newAvailableQuantity = availableQuantity - (order === null || order === void 0 ? void 0 : order.quantity);
+        let updatedProduct;
+        if (newAvailableQuantity > 0) {
+            updatedProduct = {
+                inventory: {
+                    quantity: newAvailableQuantity,
+                    inStock: true,
+                },
+            };
+        }
+        else {
+            updatedProduct = {
+                inventory: {
+                    quantity: newAvailableQuantity,
+                    inStock: false,
+                },
+            };
+        }
+        // update the quantity
+        yield product_service_1.ProductServices.updateProductIntoDB(String(order.productId), updatedProduct);
+        // create new order
+        const result = yield order_model_1.Order.create(order);
+        return result;
     }
 });
+// get all orders
+const getAllOrdersFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield order_model_1.Order.find();
+    return result;
+});
+// get orders by email
+const getAllOrdersByEmailFromDB = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield order_model_1.Order.find({ email });
+    return result;
+});
 exports.OrderServices = {
-    createOrder,
-    getAllOrders,
-    getOrderFromDB
+    addNewOrderToDB,
+    getAllOrdersFromDB,
+    getAllOrdersByEmailFromDB,
 };

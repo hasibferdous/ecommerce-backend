@@ -8,52 +8,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderControllers = void 0;
+const order_validation_1 = __importDefault(require("./order.validation"));
 const order_service_1 = require("./order.service");
+// create new order controller
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { order: orderData } = req.body;
-        const orderResult = yield order_service_1.OrderServices.createOrder(orderData);
+        const orderData = req.body;
+        const zodParseData = order_validation_1.default.parse(orderData);
+        const result = yield order_service_1.OrderServices.addNewOrderToDB(zodParseData);
         res.status(200).json({
             success: true,
-            message: "Order created successfully!",
-            data: orderResult,
-        });
-    }
-    catch (err) {
-        console.log(err);
-    }
-});
-const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const orderResult = yield order_service_1.OrderServices.getAllOrders();
-        res.status(200).json({
-            success: true,
-            message: "Orders fetched successfully!",
-            data: orderResult,
-        });
-    }
-    catch (err) {
-        console.log(err);
-    }
-});
-const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const email = req.query.email;
-        const orderResult = yield order_service_1.OrderServices.getOrderFromDB(email !== null && email !== void 0 ? email : '');
-        return res.status(200).json({
-            success: true,
-            message: email
-                ? 'Orders fetched successfully for user email!'
-                : 'Orders fetched successfully!',
-            data: orderResult,
+            message: 'Order created successfully!',
+            data: result,
         });
     }
     catch (error) {
         res.status(400).json({
             success: false,
-            message: 'Failed to fetched orders!',
+            message: error.message || 'Something went wrong',
+            error: error,
+        });
+    }
+});
+// get all orders controller
+const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let result;
+        const { email } = req.query;
+        if (email) {
+            result = yield order_service_1.OrderServices.getAllOrdersByEmailFromDB(email);
+        }
+        else {
+            result = yield order_service_1.OrderServices.getAllOrdersFromDB();
+        }
+        res.status(200).json({
+            success: true,
+            message: email
+                ? 'Orders fetched successfully for user email!'
+                : 'Orders fetched successfully!',
+            data: result,
+        });
+    }
+    catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message || 'Something went wrong',
             error: error,
         });
     }
@@ -61,5 +65,4 @@ const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.OrderControllers = {
     createOrder,
     getAllOrders,
-    getOrder
 };
