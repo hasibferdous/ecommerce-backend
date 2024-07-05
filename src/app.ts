@@ -1,21 +1,22 @@
-import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
 import { ProductRoutes } from './app/modules/product/product.route';
 import { OrderRoutes } from './app/modules/order/order.route';
 
 const app: Application = express();
-//parsers
+
+// parser
 app.use(express.json());
 app.use(cors());
 
-// application routes
+// application routers
 app.use('/api/products', ProductRoutes);
 app.use('/api/orders', OrderRoutes);
 
-const getAController = (req: Request, res: Response) => {
-  const a = 10;
-  res.send(a);
-};
+// test route to check if server is running
+app.get('/', (req: Request, res: Response) => {
+  res.send('Welcome to the E-commerce Backend ! Have a good day.');
+});
 
 // Middleware to catch 404 errors (Route not found)
 app.use((req: Request, res: Response, next) => {
@@ -23,7 +24,5 @@ app.use((req: Request, res: Response, next) => {
     error: 'Route not found',
   });
 });
-
-app.get('/', getAController);
 
 export default app;
