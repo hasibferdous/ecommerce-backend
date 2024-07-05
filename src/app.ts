@@ -17,6 +17,13 @@ const getAController = (req: Request, res: Response) => {
   res.send(a);
 };
 
+// Middleware to catch 404 errors (Route not found)
+app.use((req: Request, res: Response, next) => {
+  res.status(404).json({
+    error: 'Route not found',
+  });
+});
+
 app.get('/', getAController);
 
 export default app;

@@ -1,6 +1,7 @@
-export type Order = {
-    "email": string;
-    "productId": string;
-    "price": number;
-    "quantity": number;
+import { Types } from 'mongoose';
+export interface TOrder {
+  email: string;
+  productId: Types.ObjectId;
+  price: number;
+  quantity: number;
 }
