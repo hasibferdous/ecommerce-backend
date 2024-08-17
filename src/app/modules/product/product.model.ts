@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
-import { Inventory, TProduct, Variants } from './product.interface';
+import { TInventory, TProduct, TVariants } from './product.interface';
 
 // variants schema
-const variantsSchema = new Schema<Variants>({
+const variantsSchema = new Schema<TVariants>({
   type: {
     type: String,
     required: [true, 'Type is required'],
@@ -16,7 +16,7 @@ const variantsSchema = new Schema<Variants>({
 });
 
 // inventory schema
-const inventorySchema = new Schema<Inventory>({
+const inventorySchema = new Schema<TInventory>({
   quantity: {
     type: Number,
     minLength: [0, 'Min quantity is 0. But got {VALUE}'],

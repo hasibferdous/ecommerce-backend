@@ -8,7 +8,7 @@ const express_1 = __importDefault(require("express"));
 const product_controller_1 = require("./product.controller");
 const router = express_1.default.Router();
 // to create product
-router.post('/create-product', product_controller_1.ProductControllers.createProduct);
+router.post('/', product_controller_1.ProductControllers.createProduct);
 // to retrieve all product
 router.get('/', product_controller_1.ProductControllers.getAllProducts);
 // to get single product
